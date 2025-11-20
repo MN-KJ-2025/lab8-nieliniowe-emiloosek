@@ -103,8 +103,18 @@ def bisection(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
-
+    try:
+        for j in range(max_iter):
+            c = (a+b)/2
+            if np.abs(c) < epsilon or (b-a)/2 < epsilon:
+                return c, j
+            if f(a)*f(c)<0:
+                b=c
+            else:
+                a=c
+        return c
+    except:
+        return None
 
 def secant(
     a: int | float,
@@ -130,8 +140,10 @@ def secant(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
-
+    for j in range(max_iters):
+        c = b-f(a)*(b-a)/f((b)-f(a))
+        a,b = b,c
+    return c
 
 def difference_quotient(
     f: Callable[[float], float], x: int | float, h: int | float
