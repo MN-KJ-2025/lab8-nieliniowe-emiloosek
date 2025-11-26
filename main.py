@@ -103,18 +103,16 @@ def bisection(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    try:
-        for j in range(max_iter):
-            c = (a+b)/2
-            if np.abs(c) < epsilon or (b-a)/2 < epsilon:
-                return c, j
-            if f(a)*f(c)<0:
-                b=c
-            else:
-                a=c
-        return c
-    except:
-        return None
+    for j in range(max_iter):
+        c = float(a+b)/2
+        if np.abs(f(c)) < epsilon or float(b-a)/2 < epsilon:
+            return c, j+1
+        if f(a)*f(c)<0:
+            b=c
+        else:
+            a=c
+    return c
+
 
 def secant(
     a: int | float,
@@ -140,10 +138,19 @@ def secant(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    for j in range(max_iters):
-        c = b-f(a)*(b-a)/f((b)-f(a))
-        a,b = b,c
-    return c
+    if(f(b)*f(a)>0):
+        return None
+    for j in range(1,max_iters+1):
+        c = np.float64(b - (f(b)*np.float64(b-a))/np.float64(f(b)-f(a)))
+        if abs(f(c))< epsilon or abs(np.float64(c-b)) < epsilon:
+            return c, j
+        if f(a)*f(c) > 0:
+            a = c
+        else:
+            b = c
+        
+        
+    return c, max_iters
 
 def difference_quotient(
     f: Callable[[float], float], x: int | float, h: int | float
@@ -162,8 +169,10 @@ def difference_quotient(
         (float): Wartość ilorazu różnicowego.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
-
+    try:
+        return float((f(x+h)-f(x))/h)
+    except:
+        return None
 
 def newton(
     f: Callable[[float], float],
@@ -194,4 +203,16 @@ def newton(
             - Liczba wykonanych iteracji.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    pass
+    if f(a)*f(b)>0:
+        return None
+    if f(a)*ddf(a)>0:
+        x=a
+    elif f(b)*ddf(b) > 0:
+        x=b
+    for j in range(0,max_iter):
+        deltax = f(x)/df(x)
+        x-=deltax
+        if abs(deltax)<epsilon:
+            return x,j
+        
+    return x, max_iter
